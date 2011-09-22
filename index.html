@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" href="./css/style.css" type="text/css"/>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true"></script>
+    <script type="text/javascript" src="/lib/diy/gmaps.js"></script>
+	<script type="text/javascript" src="/lib/jquery.js"></script>
+	<script type="text/javascript" src="./js/main.js"></script>
+	<script type="text/javascript" src="./js/youtube.js"></script>
+	<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+	<script type="text/javascript">google.load("swfobject", "2.1");</script>
+    <style type="text/css">
+        html { height: 100% }
+        body { height: 100%; margin: 0; padding: 0 }
+    </style>
+	
+</head>
+<body onload="initialize()">
+	<div id="map">
+		<form id="search">
+			<input id="address" class="bigText address" type="textbox" value="London, UK" onclick="this.focus();this.select();">
+			<input type="button" id="searchBtn" value="Jump" onclick="jamp()">
+			<input type="button" id="contribute" value="contribute"/>
+		</form>
+		<div id="map_canvas" style="width: 100%; height: 100%;"></div>
+	</div>
+	<div id="formDiv">
+		<form id="form">
+			<p>Location (Drag the pin on the map)</p>
+			<input id="latitude" class="bigText latlngBox lat" name="latitude" type="textbox" disabled="disabled"/>
+			<input id="latitudeH"class="bigText latlngBox lat" name="latitude" type="hidden"/>
+			<input id="longitude" class="bigText latlngBox lng" name="longitude" type="textbox" disabled="disabled"/>
+			<input id="longitudeH" class="bigText latlngBox lng" name="longitude" type="hidden"/>
+
+			<p>Name of the place</p>
+			<input id="placename" class="bigText" name="placename" type="textbox"/><br/>
+			<p>Title</p>
+			<input id="songname" class="bigText" name="songname" type="textbox"/><br/>
+			<p>Artist</p>
+			<input id="artist" class="bigText" name="artist" type="textbox"/><br/>
+			<p>Video from Youtube<span id="ok"></span></p>
+			<input type="textbox" class="bigText" id="videoURL" size="60"/><br/>
+			<div id="videos"></div>
+			<input type="button" id="preview" value="preview"/>
+			<input type="button" id="cancelForm" value="cancel"/>
+		</form>
+		<form id="confirmation">
+			<input type="button" id="post" value="ADD THIS SONG TO THE LOCATION"/>
+		</form>
+	</div>
+	<div id="overlay"></div>
+	<div id="mainVideo"></div>
+
+</body>
+</html>
