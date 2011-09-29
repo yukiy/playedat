@@ -8,6 +8,7 @@
 	<script type="text/javascript" src="/lib/jquery.js"></script>
 	<script type="text/javascript" src="./js/main.js"></script>
 	<script type="text/javascript" src="./js/youtube.js"></script>
+	<script type="text/javascript" src="./js/gmapstyle.js"></script>
 	<script src="http://www.google.com/jsapi" type="text/javascript"></script>
 	<script type="text/javascript">google.load("swfobject", "2.1");</script>
     <style type="text/css">
@@ -18,39 +19,48 @@
 </head>
 <body onload="initialize()">
 	<div id="map">
-		<form id="search">
-			<input id="address" class="bigText address" type="textbox" value="London, UK" onclick="this.focus();this.select();">
-			<input type="button" id="searchBtn" value="Jump" onclick="jamp()">
-			<input type="button" id="contribute" value="contribute"/>
-		</form>
 		<div id="map_canvas" style="width: 100%; height: 100%;"></div>
 	</div>
+	
+	<div id="overlay"></div>
+	
+	<input type="button" id="contribute_btn" class="btn borderStyle" value="Add a spot"/>
+	
 	<div id="formDiv">
-		<form id="form">
+		<form id="form"　onSubmit="return false;">
 			<p>Location (Drag the pin on the map)</p>
-			<input id="latitude" class="bigText latlngBox lat" name="latitude" type="textbox" disabled="disabled"/>
-			<input id="latitudeH"class="bigText latlngBox lat" name="latitude" type="hidden"/>
-			<input id="longitude" class="bigText latlngBox lng" name="longitude" type="textbox" disabled="disabled"/>
-			<input id="longitudeH" class="bigText latlngBox lng" name="longitude" type="hidden"/>
+			<input id="latitude" class="textbox bigText latlngBox lat" name="latitude" type="textbox" disabled="disabled"/>
+			<input id="latitudeH"class="textbox bigText latlngBox lat" name="latitude" type="hidden"/>
+			<input id="longitude" class="textbox bigText latlngBox lng" name="longitude" type="textbox" disabled="disabled"/>
+			<input id="longitudeH" class="textbox bigText latlngBox lng" name="longitude" type="hidden"/>
 
 			<p>Name of the place</p>
-			<input id="placename" class="bigText" name="placename" type="textbox"/><br/>
+			<input id="placename" class="textbox bigText" name="placename" type="textbox"/><br/>
 			<p>Title</p>
-			<input id="songname" class="bigText" name="songname" type="textbox"/><br/>
+			<input id="songname" class="textbox bigText" name="songname" type="textbox"/><br/>
 			<p>Artist</p>
-			<input id="artist" class="bigText" name="artist" type="textbox"/><br/>
+			<input id="artist" class="textbox bigText" name="artist" type="textbox"/><br/>
 			<p>Video from Youtube<span id="ok"></span></p>
-			<input type="textbox" class="bigText" id="videoURL" size="60"/><br/>
+			<input type="textbox" class="textbox bigText" id="videoURL" size="60"/><br/>
 			<div id="videos"></div>
-			<input type="button" id="preview" value="preview"/>
-			<input type="button" id="cancelForm" value="cancel"/>
+			<input type="button" id="preview" class="btn borderStyle" value="Preview the video"/>
+			<input type="button" id="cancelForm" class="btn borderStyle" value="Cancel"/>
 		</form>
-		<form id="confirmation">
-			<input type="button" id="post" value="ADD THIS SONG TO THE LOCATION"/>
-		</form>
+		
+		<div id="confirmation"　onSubmit="return false;">
+			<input type="button" id="post_btn" class="btn borderStyle" value="Add this song to the spot"/>
+		</div>
 	</div>
-	<div id="overlay"></div>
+
 	<div id="mainVideo"></div>
+	
+	<div id="logo">
+		<img src="./img/logobeta.png"/>
+		<div id="search_form" onSubmit="jump()">
+			<input type="textbox" id="address" class="textbox address borderStyle"  value="London, UK" onclick="this.focus();this.select();">
+			<input type="button" id="search_btn" class="btn borderStyle" value="Jump" onclick="jump()">
+		</div>
+	</div>
 
 </body>
 </html>

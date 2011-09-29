@@ -8,10 +8,12 @@ $(function(){
 
 
 function setUserActionEvents(){
-	$("#contribute").click(showForm);
+	$("#address").keydown(function(e){if(e.keyCode == 13){jump();}});
+	
+	$("#contribute_btn").click(showForm);
 	$("#preview").click(checkAction);
 	$("#cancelForm").click(cancelForm);
-	$("#post").click(submitAction);
+	$("#post_btn").click(submitAction);
 	
 	$("#placename").click(function(){this.focus();this.select();});
 	$("#songname").click(function(){this.focus();this.select();});
@@ -22,6 +24,16 @@ function setUserActionEvents(){
 		$("#videos").empty();
 		$("#confirmation").hide();
 	});
+	
+	$("#overlay").click(function(){
+		$("#videos").empty();
+		$("#confirmation").hide();
+		
+		$("#mainVideo").empty();
+
+		$("#overlay").hide();
+	});
+
 }
 
 function setDefVals(){
@@ -73,11 +85,14 @@ function cancelForm(){
 	$("#ok").empty();
 	$("#confirmation").hide();
 	$("#formDiv").css({display:'none'});
+	$("#overlay").hide();
 	setDefVals();
 }
 
 
 function preview(){
+	$("#mainVideo").empty();
+
 	var lat = strToFloat($("#latitude").val());
 	var lng = strToFloat($("#longitude").val());
 	var formObj = {
@@ -98,10 +113,14 @@ function preview(){
 	//show confirmation div
 	var top = $("#form").height() + 80 ;
 	var left = $("#form").position().left;
+	var width = $("#form").width();
+	var leftAdjust = width*0.2/2;
+	left = left + leftAdjust;
+	
 	var conCss = {
 		top: top +"px",
-		left: left +"px",
-		width: $("#form").width()
+		left: left + "px",
+		width: width*0.8
 	}
 	$("#confirmation").show();
 	$("#confirmation").css(conCss);
@@ -113,7 +132,13 @@ function preview(){
 	var ytCenterX = $('#youtube').width()/2;
 	moveMapCenter(lat, lng);
 	mainMap.panBy(-ytCenterX,-Math.abs(top-centerY)-h);
+	var markerX = ytCenterX + $(window).width()/2;
+	var markerY = Math.abs(top-centerY)-h + $(window).height()/2;
+	
+	spotlight(markerX, markerY, 250);
 }
+
+
 
 function submitActionSimple(){
 	var formObj = $("#form").serialize();
@@ -179,21 +204,35 @@ var myMarker ={
 	info: null
 };
 
-var iconImg = undefined;
+var iconImg = 
+	new google.maps.MarkerImage("./img/micmarker.png",
+	new google.maps.Size(20, 34),
+	new google.maps.Point(0, 0),
+	new google.maps.Point(11.0, 17.0)
+);
+var iconShadow =
+	new google.maps.MarkerImage("./img/shadow-micmarker.png",
+	new google.maps.Size(38, 34),
+	new google.maps.Point(0, 0),
+	new google.maps.Point(11.0, 17.0)
+);
 
 function initialize() {
-	mainMap = createMap(london_latlng, 13, "ROAD");
+	mainMap = createMap(london_latlng, 14, "ROAD");
 	var mapOptions={
+		styles:gmapstyle,
 		panControl: false,
 		zoomControlOptions:{
 			position:google.maps.ControlPosition.RIGHT_CENTER
 		}
 	}
 	mainMap.setOptions(mapOptions);
-	jamp();
+	jump();
 }
 
-function jamp(){
+
+////////// search location//////////////////////////////////////////
+function jump(){
 	var address = document.getElementById("address").value;
 	codeAddress(address);
 }
@@ -204,6 +243,7 @@ function codeAddress(address) {
 		if (status == google.maps.GeocoderStatus.OK) {
 			var location = results[0].geometry.location;
 			mainMap.setCenter(location);
+			mainMap.setZoom(14);
 			createLocationInfoMarker(location);
 		} else {
 			alert("The Address is not found on the map.\n Please try another location.");
@@ -211,13 +251,20 @@ function codeAddress(address) {
 	});
 }
 
+
+
+
+////////// add new spot //////////////////////////////////////////
+
 function createLocationInfoMarker(location){
 		if(myMarker.body == undefined || myMarker.body == null){
 			myMarker.body = new google.maps.Marker({
 				position: location,
 				map: mainMap,
 				draggable: true,
-				visible: false
+				visible: false,
+				icon: iconImg,
+				shadow: iconShadow
 			});
 //			marker.info= createInfoWindow(mainMap, marker.body);
 		}else{
@@ -261,7 +308,9 @@ function loadMarkersFromJson(json){
 				position: location,
 				map: mainMap,
 				title: res.data[i].songname,
-				placeData: res.data[i]
+				placeData: res.data[i],
+				icon: iconImg,
+				shadow: iconShadow
 			});
 			google.maps.event.addListener(markers[i],'click',function(pos){showVideo(this, pos.latLng)});
 		}
@@ -275,11 +324,13 @@ function setVideoDiv(id){
 	var w = '50%';
 	setVideo("#mainVideo", "videoOfPlace", w, h, id);
 	$("#mainVideo").append("<div id='infobox'></div>");
-	$("#overlay").show();
+
+/*
 	$("#overlay").click(function(){
 		$("#mainVideo").empty();
 		$("#overlay").hide();
 	});
+*/
 }
 
 
@@ -287,7 +338,18 @@ function showVideo(marker, pos){
 	setVideoDiv(marker.placeData.videoID);
 	setInfobox(marker.placeData);
 	moveMapCenter(pos.lat(), pos.lng());
-	mainMap.panBy(-($(window).width()/3),-($(window).height()/3));
+	var markerXGap = ($(window).width()/3);
+	var markerYGap = ($(window).height()/3);
+	mainMap.panBy( -markerXGap, -markerYGap);
+	
+	var markerX = markerXGap + $(window).width()/2;
+	var markerY = markerYGap + $(window).height()/2;
+	spotlight(markerX, markerY, 250);
+}
+
+function spotlight(x, y, size){
+	$("#overlay").show();
+	$("#overlay").css("background","-webkit-gradient(radial, " + x + " " + y +", 0," + x + " " + y +", " + size + ", from(rgba(255,255,0,0)), to(rgba(0,0,0,0.6)))");
 }
 
 function setInfobox(data){
